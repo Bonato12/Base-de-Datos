@@ -89,8 +89,6 @@ CREATE TABLE registro(
 	CONSTRAINT fk_prenda FOREIGN KEY (prenda) REFERENCES prenda(id_prenda)
 );
 
-
-
 CREATE TABLE prendaAsignada(
 	id_prendaAsignada INTEGER NOT NULL,
 	empleado INTEGER NOT NULL,
@@ -99,11 +97,11 @@ CREATE TABLE prendaAsignada(
 	horaRetiro TIME NOT NULL,
 	empleadoRec INTEGER NOT NULL,
 	empleadoDev INTEGER NOT NULL,
-	fechaDevolucion DATE NOT NULL,
-	HoraDevolucion DATE NOT NULL,
+	fechaDevolucion DATE,
+	HoraDevolucion DATE,
 	CONSTRAINT pk_id_prendaAsignada PRIMARY KEY (id_prendaAsignada),
 	CONSTRAINT fk_id_empleado FOREIGN KEY (empleado) REFERENCES empleado(dni),
-	CONSTRAINT fk_id_prenda FOREIGN KEY (empleado) REFERENCES prenda(id_prenda)
+	CONSTRAINT fk_id_prenda FOREIGN KEY (prenda) REFERENCES prenda(id_prenda)
 );
 
 /* CARGA DE DATOS EN LAS DIFERENTES TABLAS */
@@ -151,6 +149,12 @@ INSERT INTO prenda VALUES(7,1,'02/02/23');
 INSERT INTO prenda VALUES(8,8,'05/02/23');
 INSERT INTO prenda VALUES(9,9,'05/02/23');
 INSERT INTO prenda VALUES(10,9,'05/02/23','06/02/23');
+
+prendaAsignada(id_prendaAsignada,empleado,prenda,fechaRetiro,HoraRetiro,empleadoRec,empleadoDev,fechaDev,HoraDev)
+
+INSERT INTO prendaAsignada VALUES(1,3922,5,'1/04/2019','02:03:04',3922,3922);
+
+
 
 
 
