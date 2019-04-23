@@ -248,8 +248,47 @@ SELECT DISTINCT TA.talle, TP.prenda, GE.genero
 FROM talle TA, tipoprenda TP, genero GE
 WHERE TA.id_talle = 1;
 
+					
+/* STORED PROCEDURES "FUNCIONES" */
+					
+									
+/* STORED PROCEDURES DEL EJERCICIO A */
+								
+CREATE function cantidad_tipoTalle(t_tipoTalle Varchar)
+returns INT AS
+$func$
+BEGIN
+    return (
+    select COUNT(TL.talle)
+    from talle TL, stock S
+    where (TL.talle = t_tipoTalle AND S.talle = TL.id_talle)
+    group by TL.talle
+    having count(TL.talle)>0)	;									
+END;
+$func$ language plpgsql;				
+								
 
+SELECT cantidad_tipoTalle('S');
+					
 
+					
+/* STORED PROCEDURES DEL EJERCICIO B */
+					
+CREATE function prenda_stock_minimo(t_tipoTalle Varchar, t_prenda VARCHAR)
+returns INT AS
+$funcStock$
+BEGIN
+    return (
+    	SELECT COUNT (*)
+		FROM stock S, prenda PR, talle TL, tipoPrenda TP
+		WHERE PR.stock = S.id_stock AND S.cantidad <= S.cantidadMiN 
+			  AND S.talle = TL.id_talle AND TL.talle = t_tipoTalle AND S.tipoPrenda = TP.id_tipoPrenda 
+			  AND TP.prenda = t_prenda
+		);									
+end;
+$funcStock$ language plpgsql;							
+
+SELECT * FROM prenda_stock_minimo('XL','Camisa');							
 
 
 	
