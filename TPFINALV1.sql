@@ -1,6 +1,5 @@
 /* POWERED BY SEBASTIAN BONATO */
 
-/* CREACION DE LAS DIFERENTES TABLAS */
 CREATE TYPE tipoSector AS ENUM('Administracion','ServicioHabitacion','Recepcionista','Botones');
 CREATE TABLE empleado (
 	dni INTEGER NOT NULL,
@@ -15,15 +14,6 @@ CREATE TABLE empleado (
 	fechaB DATE,
 	CONSTRAINT pk_id_empleado PRIMARY KEY(dni)
 	
-);
-
-CREATE TABLE prenda (
-	id_prenda INTEGER NOT NULL,
-	stock INTEGER NOT NULL,
-	fechaAlta DATE NOT NULL,
-	fechaBaja DATE,
-	CONSTRAINT pk_id_prenda PRIMARY KEY(id_prenda),
-	CONSTRAINT fk_stock FOREIGN KEY(stock) REFERENCES stock(id_stock)
 );
 
 CREATE TABLE tipoPrenda(
@@ -45,19 +35,6 @@ CREATE TABLE talle (
 	CONSTRAINT pk_id_talle PRIMARY KEY(id_talle)
 );
 
-CREATE TYPE tipoUbicacion AS ENUM('Lavanderia', 'Planchado', 'GuardaRopa');
-CREATE TABLE ubicacion(
-	id_ubicacion INTEGER NOT NULL,
-	ubicacionActual tipoUbicacion,
-	fecha DATE NOT NULL,
-	hora TIME NOT NULL,
-	empleadoRet INTEGER,
-	empleadoDev INTEGER,
-	CONSTRAINT pk_id_ubicacion PRIMARY KEY(id_ubicacion),
-	CONSTRAINT fk_empleadoRet FOREIGN KEY(empleadoRet) REFERENCES empleado (dni),
-	CONSTRAINT fk_empleadoDev FOREIGN KEY(empleadoDev) REFERENCES empleado (dni)
-);
-
 CREATE TABLE stock(
 	id_stock INTEGER NOT NULL,
 	cantidad INTEGER NOT NULL,
@@ -71,6 +48,29 @@ CREATE TABLE stock(
 	CONSTRAINT fk_id_tipoPrenda FOREIGN KEY(tipoPrenda) REFERENCES tipoPrenda(id_tipoPrenda)
 	
 );
+
+CREATE TABLE prenda (
+	id_prenda INTEGER NOT NULL,
+	stock INTEGER NOT NULL,
+	fechaAlta DATE NOT NULL,
+	fechaBaja DATE,
+	CONSTRAINT pk_id_prenda PRIMARY KEY(id_prenda),
+	CONSTRAINT fk_stock FOREIGN KEY(stock) REFERENCES stock(id_stock)
+);
+
+CREATE TYPE tipoUbicacion AS ENUM('Lavanderia', 'Planchado', 'GuardaRopa');
+CREATE TABLE ubicacion(
+	id_ubicacion INTEGER NOT NULL,
+	ubicacionActual tipoUbicacion,
+	fecha DATE NOT NULL,
+	hora TIME NOT NULL,
+	empleadoRet INTEGER,
+	empleadoDev INTEGER,
+	CONSTRAINT pk_id_ubicacion PRIMARY KEY(id_ubicacion),
+	CONSTRAINT fk_empleadoRet FOREIGN KEY(empleadoRet) REFERENCES empleado (dni),
+	CONSTRAINT fk_empleadoDev FOREIGN KEY(empleadoDev) REFERENCES empleado (dni)
+);
+
 
 CREATE TABLE nota(
 	id_nota SERIAL NOT NULL,
@@ -96,15 +96,28 @@ CREATE TABLE prendaAsignada(
 	fechaRetiro DATE NOT NULL,
 	horaRetiro TIME NOT NULL,
 	empleadoRec INTEGER NOT NULL,
-	empleadoDev INTEGER NOT NULL,
-	fechaDevolucion DATE,
-	HoraDevolucion DATE,
+	fechaDevolucion DATE ,
+	HoraDevolucion TIME ,
 	CONSTRAINT pk_id_prendaAsignada PRIMARY KEY (id_prendaAsignada),
 	CONSTRAINT fk_id_empleado FOREIGN KEY (empleado) REFERENCES empleado(dni),
 	CONSTRAINT fk_id_prenda FOREIGN KEY (prenda) REFERENCES prenda(id_prenda)
 );
 
-/* CARGA DE DATOS EN LAS DIFERENTES TABLAS */
+
+INSERT INTO empleado VALUES(3922,'Sebastian','Bonato','Administracion','Herrera',3442780,'sebabonato12@gmail.com',4000,'10/01/2018'); 
+INSERT INTO empleado VALUES(3921,'Lucas','Areguati','Botones','San Jose',3442780,'sebabonato12@gmail.com',4000,'10/01/2018'); 
+INSERT INTO empleado VALUES(3923,'Alexis Mara','Santos','Recepcionista','CDU',3442780,'sebabonato12@gmail.com',4000,'10/01/2018'); 
+INSERT INTO empleado VALUES(3925,'Walter','Bel','Recepcionista','CDU',3442780,'belwalterv@gmail.com',6000,'22/01/2018'); 
+INSERT INTO empleado VALUES(3928,'Roman','Riquelme','Botones','BS AS',3442780,'roman@gmail.com',7000,'10/01/2019'); 
+
+INSERT INTO tipoPrenda VALUES(1,'Pantalon');
+INSERT INTO tipoPrenda VALUES(2,'Camisa');
+INSERT INTO tipoPrenda VALUES(3,'Saco');
+INSERT INTO tipoPrenda VALUES(4,'Pollera');
+
+INSERT INTO genero VALUES(1,'F');
+INSERT INTO genero VALUES(2,'M');
+INSERT INTO genero VALUES(3,'U');
 
 INSERT INTO talle VALUES(1,'S');
 INSERT INTO talle VALUES(2,'L');
@@ -114,21 +127,6 @@ INSERT INTO talle VALUES(5,'XL');
 INSERT INTO talle VALUES(6,'XS');
 INSERT INTO talle Values(7,'XXL');
 
-INSERT INTO genero VALUES(1,'F');
-INSERT INTO genero VALUES(2,'M');
-INSERT INTO genero VALUES(3,'U');
-
-INSERT INTO tipoPrenda VALUES(1,'Pantalon');
-INSERT INTO tipoPrenda VALUES(2,'Camisa');
-INSERT INTO tipoPrenda VALUES(3,'Saco');
-INSERT INTO tipoPrenda VALUES(4,'Pollera');
-
-INSERT INTO empleado VALUES(3922,'Sebastian','Bonato','Administracion','Herrera',3442780,'sebabonato12@gmail.com',4000,'10/01/2018'); 
-INSERT INTO empleado VALUES(3921,'Lucas','Areguati','Botones','San Jose',3442780,'sebabonato12@gmail.com',4000,'10/01/2018'); 
-INSERT INTO empleado VALUES(3923,'Alexis Mara','Santos','Recepcionista','CDU',3442780,'sebabonato12@gmail.com',4000,'10/01/2018'); 
-INSERT INTO empleado VALUES(3925,'Walter','Bel','Recepcionista','CDU',3442780,'belwalterv@gmail.com',6000,'22/01/2018'); 
-INSERT INTO empleado VALUES(3928,'Roman','Riquelme','Botones','BS AS',3442780,'roman@gmail.com',7000,'10/01/2019'); 
-
 INSERT INTO stock VALUES(1,10,5,1,1,3);
 INSERT INTO stock VALUES(2,10,5,3,3,2);
 INSERT INTO stock VALUES(3,10,2,3,2,1);
@@ -136,8 +134,6 @@ INSERT INTO stock VALUES(4,10,7,1,2,1);
 INSERT INTO stock VALUES(5,10,7,3,2,2);
 INSERT INTO stock VALUES(6,10,7,3,3,2);
 INSERT INTO stock VALUES(7,10,7,3,3,1);
-INSERT INTO stock VALUES(8,4,5,3,3,1);
-INSERT INTO stock VALUES(9,0,5,3,3,1);
 
 INSERT INTO prenda VALUES(1,2,'01/02/13');
 INSERT INTO prenda VALUES(2,1,'05/02/13');
@@ -146,13 +142,18 @@ INSERT INTO prenda VALUES(4,4,'04/02/23');
 INSERT INTO prenda VALUES(5,1,'02/02/23');
 INSERT INTO prenda VALUES(6,4,'08/02/23');
 INSERT INTO prenda VALUES(7,1,'02/02/23');
-INSERT INTO prenda VALUES(8,8,'05/02/23');
-INSERT INTO prenda VALUES(9,9,'05/02/23');
-INSERT INTO prenda VALUES(10,9,'05/02/23','06/02/23');
 
-prendaAsignada(id_prendaAsignada,empleado,prenda,fechaRetiro,HoraRetiro,empleadoRec,empleadoDev,fechaDev,HoraDev)
-
-INSERT INTO prendaAsignada VALUES(1,3922,5,'1/04/2019','02:03:04',3922,3922);
+INSERT INTO prendaAsignada VALUES(1,3922,7,'1/04/2019','02:03:04',3922,3922,'1/04/2019','02:03:04');
+INSERT INTO prendaAsignada VALUES(13,3923,7,'1/04/2019','02:03:04',3922,3922);
+INSERT INTO prendaAsignada VALUES(7,3922,8,'1/04/2019','02:03:04',3922,3922);
+INSERT INTO prendaAsignada VALUES(5,3922,8,'1/04/2019','02:03:04',3922,3922);
+INSERT INTO prendaAsignada VALUES(12312,3922,6,'1/04/2019','02:03:04',3922,3922);
+INSERT INTO prendaAsignada VALUES(23123,3921,2,'1/04/2019','02:03:04',3922,3922);																									   
+INSERT INTO prendaAsignada VALUES(101,3921,2,'1/04/2019','02:03:04',3922,3922);
+INSERT INTO prendaAsignada VALUES(102,3922,2,'1/04/2019','02:03:04',3922,3922);
+INSERT INTO prendaAsignada VALUES(106,3922,2,'1/04/2019','02:03:04',3922,3922);
+INSERT INTO prendaAsignada VALUES(107,3922,3,'1/04/2019','02:03:04',3922,3922);
+INSERT INTO prendaAsignada VALUES(23123,3921,2,'1/04/2019','02:03:04',3922,3922);
 
 
 
