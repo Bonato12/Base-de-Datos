@@ -2,6 +2,7 @@
 
 CREATE TYPE tipoSector AS ENUM('Administracion','ServicioHabitacion','Recepcionista','Botones');
 CREATE TABLE empleado (
+	id_empleado SERIAL,
 	dni INTEGER NOT NULL,
 	nombre VARCHAR(30) NOT NULL,
 	apellido VARCHAR(30) NOT NULL,
@@ -12,31 +13,32 @@ CREATE TABLE empleado (
 	salario FLOAT NOT NULL,
 	fechaA DATE NOT NULL,
 	fechaB DATE,
-	CONSTRAINT pk_id_empleado PRIMARY KEY(dni)
-	
+	CONSTRAINT pk_id_empleado PRIMARY KEY(id_empleado),
+	CONSTRAINT check_precio CHECK(salario > 0),
+	CONSTRAINT dni_unique UNIQUE(dni)
 );
 
 CREATE TABLE tipoPrenda(
-	id_tipoPrenda INTEGER NOT NULL,
+	id_tipoPrenda SERIAL,
 	prenda VARCHAR(30) NOT NULL,
 	CONSTRAINT pk_tipoPrenda PRIMARY KEY(id_tipoPrenda)
 );
 
 CREATE TABLE genero(
-	id_genero INTEGER NOT NULL,
+	id_genero SERIAL,
 	genero VARCHAR(30) NOT NULL,
 	CONSTRAINT pk_id_genero PRIMARY KEY(id_genero)
 
 );
 
 CREATE TABLE talle (
-	id_talle INTEGER NOT NULL,
+	id_talle SERIAL,
 	talle VARCHAR(30) NOT NULL,
 	CONSTRAINT pk_id_talle PRIMARY KEY(id_talle)
 );
 
 CREATE TABLE stock(
-	id_stock INTEGER NOT NULL,
+	id_stock SERIAL,
 	cantidad INTEGER NOT NULL,
 	cantidadMin INTEGER NOT NULL,
 	genero INTEGER NOT NULL,
@@ -45,12 +47,13 @@ CREATE TABLE stock(
 	CONSTRAINT pk_id_stock PRIMARY KEY(id_stock),
 	CONSTRAINT fk_id_genero FOREIGN KEY (genero) REFERENCES genero(id_genero),
 	CONSTRAINT fk_id_talle FOREIGN KEY (talle) REFERENCES talle(id_talle),
-	CONSTRAINT fk_id_tipoPrenda FOREIGN KEY(tipoPrenda) REFERENCES tipoPrenda(id_tipoPrenda)
-	
+	CONSTRAINT fk_id_tipoPrenda FOREIGN KEY(tipoPrenda) REFERENCES tipoPrenda(id_tipoPrenda),
+	CONSTRAINT check_stock_minimo CHECK(cantidad > 0),
+	CONSTRAINT check_stock_minimo CHECK(cantidadMin > 0)
 );
 
 CREATE TABLE prenda (
-	id_prenda INTEGER NOT NULL,
+	id_prenda SERIAL,
 	stock INTEGER NOT NULL,
 	fechaAlta DATE NOT NULL,
 	fechaBaja DATE,
@@ -60,20 +63,20 @@ CREATE TABLE prenda (
 
 CREATE TYPE tipoUbicacion AS ENUM('Lavanderia', 'Planchado', 'GuardaRopa');
 CREATE TABLE ubicacion(
-	id_ubicacion INTEGER NOT NULL,
+	id_ubicacion SERIAL,
 	ubicacionActual tipoUbicacion,
 	fecha DATE NOT NULL,
 	hora TIME NOT NULL,
 	empleadoRet INTEGER,
 	empleadoDev INTEGER,
 	CONSTRAINT pk_id_ubicacion PRIMARY KEY(id_ubicacion),
-	CONSTRAINT fk_empleadoRet FOREIGN KEY(empleadoRet) REFERENCES empleado (dni),
-	CONSTRAINT fk_empleadoDev FOREIGN KEY(empleadoDev) REFERENCES empleado (dni)
+	CONSTRAINT fk_empleadoRet FOREIGN KEY(empleadoRet) REFERENCES empleado (id_empleado),
+	CONSTRAINT fk_empleadoDev FOREIGN KEY(empleadoDev) REFERENCES empleado (id_empleado)
 );
 
 
 CREATE TABLE nota(
-	id_nota SERIAL NOT NULL,
+	id_nota SERIAL,
 	descripcion VARCHAR NOT NULL,
 	stock INTEGER NOT NULL,
 	fecha timestamp without time zone NOT NULL,
@@ -82,7 +85,7 @@ CREATE TABLE nota(
 );
 
 CREATE TABLE registro(
-	id_registro INTEGER NOT NULL,
+	id_registro SERIAL,
 	motivoBaja VARCHAR(30) NOT NULL,
 	prenda INTEGER  NOT NULL,
 	CONSTRAINT pk_id_registro PRIMARY KEY(id_registro),	
@@ -90,7 +93,7 @@ CREATE TABLE registro(
 );
 
 CREATE TABLE prendaAsignada(
-	id_prendaAsignada INTEGER NOT NULL,
+	id_prendaAsignada SERIAL,
 	empleado INTEGER NOT NULL,
 	prenda INTEGER NOT NULL,
 	fechaRetiro DATE NOT NULL,
@@ -99,7 +102,7 @@ CREATE TABLE prendaAsignada(
 	fechaDevolucion DATE ,
 	HoraDevolucion TIME ,
 	CONSTRAINT pk_id_prendaAsignada PRIMARY KEY (id_prendaAsignada),
-	CONSTRAINT fk_id_empleado FOREIGN KEY (empleado) REFERENCES empleado(dni),
+	CONSTRAINT fk_id_empleado FOREIGN KEY (empleado) REFERENCES empleado(id_empleado),
 	CONSTRAINT fk_id_prenda FOREIGN KEY (prenda) REFERENCES prenda(id_prenda)
 );
 
