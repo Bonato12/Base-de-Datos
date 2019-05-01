@@ -177,6 +177,21 @@ CREATE TRIGGER trigger_e AFTER INSERT OR UPDATE ON stock
 FOR EACH ROW EXECUTE PROCEDURE func_e();
 
 
+/* TRIGGER DE PRENDAASIGNADA */
+
+CREATE FUNCTION empleado_dev() RETURNS TRIGGER AS $funcemp$
+DECLARE 
+prenda INTEGER;
+empleado INTEGER;
+BEGIN
+	IF (NEW.prenda = (SELECT DISTINCT Pa.prenda FROM prendaAsignada PA WHERE PA.empleado = NEW.empleado)) THEN
+		RAISE EXCEPTION 'El empleado todavía posee una prenda del mismo tipo sin devolver';
+	END IF;
+RETURN NEW;
+END; $funcemp$ LANGUAGE plpgsql;
+
+CREATE TRIGGER empleado_dev_trigger BEFORE INSERT ON prendaAsignada FOR EACH ROW EXECUTE PROCEDURE empleado_dev();					
+					
 								
 /* CONSULTAS
 								
